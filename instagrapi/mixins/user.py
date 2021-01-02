@@ -322,7 +322,7 @@ class UserMixin:
             users = users[:amount]
         return users
 
-    def user_following_v1(self, user_id: int, amount: int = 0) -> List[User]:
+    def user_following_v1(self, user_id: int, amount: int = 0, max_id: int = None) -> List[User]:
         """
         Get user's followers information
 
@@ -332,6 +332,8 @@ class UserMixin:
             User id of an instagram account
         amount: int, optional
             Maximum number of media to return, default is 0
+        max_id: int, optional
+            Search start position, default is None
 
         Returns
         -------
@@ -339,7 +341,7 @@ class UserMixin:
             List of objects of User type
         """
         user_id = int(user_id)
-        max_id = ""
+        max_id = str(max_id if max_id else "")
         users = []
         while True:
             result = self.private_request(
@@ -359,7 +361,8 @@ class UserMixin:
             users = users[:amount]
         return users
 
-    def user_following(self, user_id: int, use_cache: bool = True, amount: int = 0) -> Dict[int, User]:
+    def user_following(self, user_id: int, use_cache: bool = True, amount: int = 0, max_id: int = None) -> Dict[
+        int, User]:
         """
         Get user's followers information
 
@@ -371,6 +374,8 @@ class UserMixin:
             Whether or not to use information from cache, default value is True
         amount: int, optional
             Maximum number of media to return, default is 0
+        max_id: int, optional
+            Search start position, default is None
 
         Returns
         -------
@@ -386,13 +391,13 @@ class UserMixin:
             #     if not isinstance(e, ClientError):
             #         self.logger.exception(e)
             #     users = self.user_following_v1(user_id, amount)
-            users = self.user_following_v1(user_id, amount)
+            users = self.user_following_v1(user_id, amount, max_id)
             self._users_following[user_id] = {
                 user.pk: user for user in users
             }
         return self._users_following[user_id]
 
-    def user_followers_v1(self, user_id: int, amount: int = 0) -> List[User]:
+    def user_followers_v1(self, user_id: int, amount: int = 0, max_id: int = None) -> List[User]:
         """
         Get user's followers information
 
@@ -402,6 +407,8 @@ class UserMixin:
             User id of an instagram account
         amount: int, optional
             Maximum number of media to return, default is 0
+        max_id: int, optional
+            Search start position, default is None
 
         Returns
         -------
@@ -409,7 +416,7 @@ class UserMixin:
             List of objects of User type
         """
         user_id = int(user_id)
-        max_id = ""
+        max_id = str(max_id if max_id else "")
         users = []
         while True:
             result = self.private_request(
@@ -423,7 +430,8 @@ class UserMixin:
                 break
         return users
 
-    def user_followers(self, user_id: int, use_cache: bool = True, amount: int = 0) -> Dict[int, User]:
+    def user_followers(self, user_id: int, use_cache: bool = True, amount: int = 0, max_id: int = None) -> Dict[
+        int, User]:
         """
         Get user's followers
 
@@ -435,6 +443,8 @@ class UserMixin:
             Whether or not to use information from cache, default value is True
         amount: int, optional
             Maximum number of media to return, default is 0
+        max_id: int, optional
+            Search start position, default is None
 
         Returns
         -------
@@ -443,7 +453,7 @@ class UserMixin:
         """
         user_id = int(user_id)
         if not use_cache or user_id not in self._users_followers:
-            users = self.user_followers_v1(user_id, amount)
+            users = self.user_followers_v1(user_id, amount, max_id)
             self._users_followers[user_id] = {
                 user.pk: user for user in users
             }
